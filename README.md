@@ -1,3 +1,4 @@
+
 # 🏋️ Workout Logger
 
 A modern web application for tracking gym workouts, exercises, and progress over time.
@@ -82,3 +83,4 @@ This project is being built to:
 **Dearborn Chisale**
 
 Software Engineering Student
+
