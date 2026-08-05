@@ -2,7 +2,17 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 export default function CreateWorkoutPage() {
-  const [sets, setSets] = useState(1);
+  const [sets, setSets] = useState([
+    {
+      id:1,
+      weight:"",
+      reps:"",
+    }
+  ]);
+
+  const [date, setDate] = useState("");
+  const [notes, setNotes] = useState("");
+  const [exercise, setExercise] = useState("");
   return (
     <main className="p-6">
       <h1 className="text-2xl font-bold"> New Workout</h1>
@@ -17,14 +27,14 @@ export default function CreateWorkoutPage() {
 
             <label > Date </label>
 
-            <input type="date" className="border rounded-md p-3" />
+            <input type="date" value = {date} className="border rounded-md p-3" onChange={(event) => {setDate(event?.target.value)}} />
 
           </div>
 
           <div className="flex flex-col gap-2">
 
             <label> Notes </label>
-            <textarea className="border rounded-md p-3 h-32" />
+            <textarea className="border rounded-md p-3 h-32"  value={notes} onChange={(event) => {setNotes(event?.target.value)}}/>
 
           </div>
 
@@ -33,7 +43,7 @@ export default function CreateWorkoutPage() {
           <div className="flex flex-col gap-2"> 
             <label > Select an exercise </label>
 
-            <select className="border rounded-md p-3 " >
+            <select className="border rounded-md p-3 " value={exercise} onChange={(event) => {setExercise(event?.target.value)}} >
 
               <option value={"Bench Press"}> Bench Press</option>
               <option value={"Barbell curls"}> Barbell curls </option>
@@ -44,38 +54,66 @@ export default function CreateWorkoutPage() {
             
           </div>
           
-          <div className="flex gap-4">
+            {sets.map((set,index) => 
+              <div key={set.id} className="flex gap-4">
 
-            <div className="flex flex-1 flex-col gap-2">
+                  <div className="flex flex-1 flex-col gap-2">
+                    <label> Set Number </label>
+                    <input type="number" value={index + 1} readOnly className="border rounded-md p-3"/>
+                  </div>
 
-              <label> Set Number  </label>
-              <input type="number" className="border rounded-md p-3"/>
+                  <div className="flex flex-1 flex-col gap-2"> 
+                      <label> Reps </label>
+                      <input type ="number" value={set.reps} className="border rounded-md p-3" onChange={(event )=> { 
 
+                        const updatedSets = sets.map((currentSet) => {
+                          if (currentSet.id === set.id){
+                            return{
+                              ...currentSet,
+                              reps : event.target.value,
+                            };
+                          }
+                          
+                          return currentSet; 
+                        });
 
-            </div>
+                        setSets(updatedSets);
+                        
+                        console.log(event?.target.value);}}/>
+                  </div> 
 
-            <div className="flex flex-1 flex-col gap-2">
+                  <div className="flex flex-1 flex-col gap-2">
+                    <label> Weight </label>
+                    <input type="number" value={set.weight} className="border rounded-md p-3" onChange={(event) => {
 
-              <label> Reps </label>
-              <input type="number" className="border rounded-md p-3" />
+                      const updatedWeight = sets.map((currentWeight) => {
+                        if(currentWeight.id === set.id){
+                          return{
+                            ...currentWeight,
+                            weight : event.target.value,
+                          };
+                        }
 
-            </div>
+                        return currentWeight;
+                      });
 
-            <div className="flex flex-1 flex-col gap-2">
+                      setSets(updatedWeight);
+                      console.log(event?.target.value);}}/>
+                  </div>
+              </div>
+            )}
 
-              <label> Weight </label>
-              <input type="number" className="border rounded-md p-3"/>
-
-            </div>
-
-            <Button 
-            type="button" 
-            className="rounded-lg bg-black px-6 py-3 font-medium text-white"
-            onClick={() => setSets(sets + 1)}>
+            <Button onClick={() => setSets([...sets, {
+              id:Date.now(),
+              reps: "",
+              weight:"",
+            }])}>
               Add Set 
             </Button>
 
-          </div>
+            
+
+          
         </div>
     </main>
   );
