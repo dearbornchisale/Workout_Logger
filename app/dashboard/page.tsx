@@ -1,6 +1,7 @@
 import StatCard from "@/components/dashboard/StatCard";
 import WorkoutCard from "@/components/dashboard/WorkCard";
 import { Button } from "@/components/ui/button"
+
 export default function DashboardPage() {
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-8">
@@ -61,7 +62,7 @@ export default function DashboardPage() {
 
           <section className="mt-10 flex justify-center">
 
-            <Button className="rounded-lg bg-black px-6 py-3 font-medium text-white">
+            <Button  className="rounded-lg bg-black px-6 py-3 font-medium text-white">
               + Create Workout
             </Button>
             
