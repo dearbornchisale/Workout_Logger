@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -25,11 +26,35 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refreshes the session if expired
-  await supabase.auth.getUser();
+
+  const {data, error} = await supabase.auth.getUser();
+
+  const protectedPaths =[
+    "/dashboard",
+    "/workouts",
+    "/progress",
+    "/profile",
+  ];
+
+  const isProtectedPath = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path));
+  
+  const isLoginPage = request.nextUrl.pathname == "/login";
+
+  if(!data.user && isProtectedPath){
+      return NextResponse.redirect(new URL ("/login", request.url));
+  }
+
+
+  if (data.user && isLoginPage){
+    return NextResponse.redirect(new URL ("/dashboard", request.url));
+    }
 
   return supabaseResponse;
 }
+
+
+
+
 
 export const config = {
   matcher: [
