@@ -13,7 +13,7 @@ export default function BottomNav() {
         </li>
 
         <li>
-          <Link href="/progress">Progress</Link>
+          <Link href="/workouts/new">Workouts</Link>
         </li>
 
         <li>
