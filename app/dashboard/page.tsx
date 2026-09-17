@@ -1,73 +1,89 @@
-import StatCard from "@/components/dashboard/StatCard";
-import WorkoutCard from "@/components/dashboard/WorkCard";
-import { Button } from "@/components/ui/button"
+  import StatCard from "@/components/dashboard/StatCard";
+  import WorkoutCard from "@/components/dashboard/WorkCard";
+  import { Button } from "@/components/ui/button"
+  import { createClient  } from "@/lib/supabase-server";
 
-export default function DashboardPage() {
-  return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-8">
 
-        <section> 
-          <h1 className="text-3xl font-bold ">
-            Good Morning, Dearborn 👋
-          </h1>
+  export default async function  DashboardPage() {
 
-          <p className="mt-2 text-grey-500">
-            Tuesday, 21 July 
-          </p>
-        </section>
+    const supabase =  await createClient();
 
-        <section className="mt-8 grid gap-4 sm:grid-cols-3">
-          <StatCard
-          title="Total Workouts"
-          value={34}
-          />
+  
+        const { data : { user },  } = await supabase.auth.getUser()
 
-          <StatCard 
-          title="Total Sets"
-          value={684}
-          />
+        if (!user) return null; 
 
-          <StatCard 
-          title="Highiest Weight"
-          value="180 kg"
-          />
+        const googleName = user.user_metadata?.full_name  || user.user_metadata?.name;
 
-        </section>
+        const emailName = user.email?.split("@")[0].replace(/[._-]/g,  " ");
 
-        <section className="mt-10">
+        const userName = googleName || emailName || "User";
 
-          <h2 className="text-xl font-semibold">
-            Recent Workouts 
-          </h2>
+    return (
+      <div className="mx-auto w-full max-w-5xl px-6 py-8">
 
-          <div className="mt-3">
-            
-            <WorkoutCard 
-            name="Pull Day"
-            date=" Yesterday"
-            />
+          <section> 
+            <h1 className="text-3xl font-bold ">
+            Welcome Back, {userName} 👋
+            </h1>
 
-            <WorkoutCard 
-            name="Push Day"
-            date=" Monday"
-            />
-
-            <WorkoutCard
-            name="Leg Day"
-            date=" Thursday"
-            />
-
-          </div>
+            <p className="mt-2 text-grey-500">
+              Tuesday, 21 July 
+            </p>
           </section>
 
-          <section className="mt-10 flex justify-center">
+          <section className="mt-8 grid gap-4 sm:grid-cols-3">
+            <StatCard
+            title="Total Workouts"
+            value={34}
+            />
 
-            <Button  className="rounded-lg bg-black px-6 py-3 font-medium text-white">
-              + Create Workout
-            </Button>
-            
+            <StatCard 
+            title="Total Sets"
+            value={684}
+            />
+
+            <StatCard 
+            title="Highiest Weight"
+            value="180 kg"
+            />
+
           </section>
-          
-          </div>
-  );
-}
+
+          <section className="mt-10">
+
+            <h2 className="text-xl font-semibold">
+              Recent Workouts 
+            </h2>
+
+            <div className="mt-3">
+              
+              <WorkoutCard 
+              name="Pull Day"
+              date=" Yesterday"
+              />
+
+              <WorkoutCard 
+              name="Push Day"
+              date=" Monday"
+              />
+
+              <WorkoutCard  
+              name="Leg Day"
+              date=" Thursday"
+              />
+
+            </div>
+            </section>
+
+            <section className="mt-10 flex justify-center">
+
+              <Button  className="rounded-lg bg-black px-6 py-3 font-medium text-white">
+                + Create Workout
+              </Button>
+              
+            </section>
+            
+            </div>
+    );
+  }
