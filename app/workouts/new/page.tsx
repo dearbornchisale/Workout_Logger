@@ -1,8 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase-client";
 import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+
 
 export default function CreateWorkoutPage() {
+
   const [sets, setSets] = useState([
     {
       id:1,
@@ -11,9 +17,87 @@ export default function CreateWorkoutPage() {
     }
   ]);
 
-  const [date, setDate] = useState("");
+  const [workout_date, setWorkoutDate] = useState("");
   const [notes, setNotes] = useState("");
-  const [exercise, setExercise] = useState("");
+  const [selectedExerciseId, setselectedExerciseId] = useState("");
+  const [exercises, setExercises] = useState([
+    {
+     id:1,
+     exercise_name:""
+    }
+  ]);
+
+  useEffect(() => {
+    
+    async function loadExercises() {
+      const supabase = createClient();
+      const {data, error } = await  supabase.from("exercises").select("id, exercise_name");
+
+      if (error){
+        console.log(error.message)
+        return;
+      }
+
+      
+      setExercises(data);
+
+    }
+    
+    loadExercises();
+
+  }, []);
+
+  const router = useRouter();
+
+  async function handleSubmitWorkout() {
+
+    const supabase = createClient();
+
+    const {data : {user}} = await supabase.auth.getUser();
+
+    if(!user){
+      return;
+    }
+
+    const user_id = user.id;
+
+    const {data, error} = await supabase.from("workouts").insert({user_id, notes, workout_date }).select()
+
+    if(error){
+      console.log(error.message);
+      return;
+    }
+
+    const newWorkoutId = data[0].id;
+
+    const setsToInsert = sets.map((set, index) => {
+
+
+      return{
+
+        workout_id : newWorkoutId,
+        exercise_id : selectedExerciseId,
+        set_number : index+1,
+        reps: set.reps,
+        weight: set.weight
+
+      
+      };
+
+      
+    });
+
+     const {error : setsError} = await supabase.from("sets").insert(setsToInsert);
+
+      if(setsError){
+        console.log(setsError.message);
+        return;
+      }
+
+      router.push("/dashboard");
+ 
+  }
+
   return (
     <main className="p-6">
       <h1 className="text-2xl font-bold"> New Workout</h1>
@@ -28,7 +112,7 @@ export default function CreateWorkoutPage() {
 
             <label > Date </label>
 
-            <input type="date" value = {date} className="border rounded-md p-3" onChange={(event) => {setDate(event?.target.value)}} />
+            <input type="date" value = {workout_date} className="border rounded-md p-3" onChange={(event) => {setWorkoutDate(event?.target.value)}} />
 
           </div>
 
@@ -44,15 +128,13 @@ export default function CreateWorkoutPage() {
           <div className="flex flex-col gap-2"> 
             <label > Select an exercise </label>
 
-            <select className="border rounded-md p-3 " value={exercise} onChange={(event) => {setExercise(event?.target.value)}} >
 
-              <option value={"Bench Press"}> Bench Press</option>
-              <option value={"Barbell curls"}> Barbell curls </option>
-              <option value={"Tricep pushdowns"}> Tricep pushdowns </option>
-              <option value={"Bicep curls"}> Bicep curls </option>
-            
+              <select className="border rounded-md p-3 " value={selectedExerciseId} onChange={(event) => {setselectedExerciseId(event?.target.value)}} >
+
+                {exercises.map((exercise) => (
+                  <option key={exercise.id} value={exercise.id}> {exercise.exercise_name} </option>
+                ))}
             </select>
-            
           </div>
           
             {sets.map((set,index) => 
@@ -64,7 +146,9 @@ export default function CreateWorkoutPage() {
                   </div>
 
                   <div className="flex flex-1 flex-col gap-2"> 
+
                       <label> Reps </label>
+
                       <input type ="number" value={set.reps} className="border rounded-md p-3" onChange={(event )=> { 
 
                         const updatedSets = sets.map((currentSet) => {
@@ -84,7 +168,9 @@ export default function CreateWorkoutPage() {
                   </div> 
 
                   <div className="flex flex-1 flex-col gap-2">
+
                     <label> Weight </label>
+
                     <input type="number" value={set.weight} className="border rounded-md p-3" onChange={(event) => {
 
                       const updatedWeight = sets.map((currentWeight) => {
@@ -101,7 +187,9 @@ export default function CreateWorkoutPage() {
                       setSets(updatedWeight);
                       console.log(event?.target.value);}}/>
                   </div>
+
               </div>
+
             )}
 
             <Button onClick={() => setSets([...sets, {
@@ -112,9 +200,9 @@ export default function CreateWorkoutPage() {
               Add Set 
             </Button>
 
-            
 
-          
+            <Button onClick={ () => handleSubmitWorkout() }> Submit Workout </Button>
+
         </div>
     </main>
   );
