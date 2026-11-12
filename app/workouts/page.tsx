@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import DeleteWorkoutButton from "@/components/workouts/DeleteWorkoutButton";
 
 
 export default async function HistoryPage() {
@@ -31,11 +32,13 @@ export default async function HistoryPage() {
       <h1 className="text-2xl font-bold"> Workout History </h1>
 
       {workouts.length === 0 ? (
-        <p className="text-muted-foreground"> NO workouts yet. Log your first one  ! </p>) : (
+        <p className="text-muted-foreground"> No workouts yet. Log your first one! </p>) : (
         workouts.map((workout) => (
           <div key={workout.id}>
             <h2>{workout.workout_date}</h2>
             <p>{workout.notes}</p>
+
+            <DeleteWorkoutButton workoutId={workout.id} />  
 
             {workout.sets.map((set) => (
               <p key={set.id}>
