@@ -1,7 +1,8 @@
 import StatCard from "@/components/dashboard/StatCard";
 import WorkoutCard from "@/components/dashboard/WorkCard";
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase-server";
+import Link from "next/link";
 
 
 export default async function DashboardPage() {
@@ -70,8 +71,13 @@ export default async function DashboardPage() {
     return;
   }
 
-
-
+  const currentDate = new Date();
+  const today = currentDate.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
 
 
 
@@ -83,8 +89,8 @@ export default async function DashboardPage() {
           Welcome Back, {userName} 👋
         </h1>
 
-        <p className="mt-2 text-grey-500">
-          Tuesday, 21 July
+        <p className="mt-2 text-gray-500">
+          {today}
         </p>
       </section>
 
@@ -118,19 +124,22 @@ export default async function DashboardPage() {
           {recentWorkouts.length === 0 ? (
             <p className="text-muted-foreground"> No workouts yet. Log your first one ! </p>) : (recentWorkouts.map((workout) =>
 
-              <WorkoutCard key={workout.id} name={workout.notes || "Workout"} date={workout.workout_date}/> 
+              <WorkoutCard key={workout.id} name={workout.notes || "Workout"} date={workout.workout_date} />
             ))}
 
-          
+
         </div>
       </section>
 
       <section className="mt-10 flex justify-center">
 
-        <Button className="rounded-lg bg-black px-6 py-3 font-medium text-white">
-          + Create Workout
-        </Button>
+        <Link
+          href="/workouts/new"
+          className={buttonVariants({ size: "lg" })}
+        >
+          + Create New Workout
 
+        </Link>
       </section>
 
     </div>

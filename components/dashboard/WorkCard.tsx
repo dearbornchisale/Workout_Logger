@@ -8,7 +8,7 @@ export default function WorkoutCard({
     date,
 }: WorkoutCardProps) {
     return (
-        <div className=" flex items-center justisy-between border-b py-4 ">
+        <div className=" flex items-center justify-between border-b py-4 ">
             <p className="font-medium"> {name} </p>
             <p className="text-sm text-gray-500 "> {date} </p>
         </div>
