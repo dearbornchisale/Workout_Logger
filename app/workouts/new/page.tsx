@@ -30,16 +30,21 @@ export default function CreateWorkoutPage() {
   useEffect(() => {
     
     async function loadExercises() {
+
       const supabase = createClient();
+
       const {data, error } = await  supabase.from("exercises").select("id, exercise_name");
 
       if (error){
         console.log(error.message)
         return;
       }
-
       
       setExercises(data);
+
+      if (data.length > 0) {
+        setselectedExerciseId(String(data[0].id));
+      }
 
     }
     
@@ -76,10 +81,10 @@ export default function CreateWorkoutPage() {
       return{
 
         workout_id : newWorkoutId,
-        exercise_id : selectedExerciseId,
+        exercise_id : Number(selectedExerciseId),
         set_number : index+1,
-        reps: set.reps,
-        weight: set.weight
+        reps: Number(set.reps),
+        weight: Number(set.weight)
 
       
       };
@@ -129,7 +134,11 @@ export default function CreateWorkoutPage() {
             <label > Select an exercise </label>
 
 
-              <select className="border rounded-md p-3 " value={selectedExerciseId} onChange={(event) => {setselectedExerciseId(event?.target.value)}} >
+              <select className="border rounded-md p-3 "
+
+               value={selectedExerciseId} onChange={(event) => {setselectedExerciseId(event?.target.value)}} 
+               
+               >
 
                 {exercises.map((exercise) => (
                   <option key={exercise.id} value={exercise.id}> {exercise.exercise_name} </option>
