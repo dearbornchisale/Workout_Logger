@@ -1,6 +1,6 @@
 import StatCard from "@/components/dashboard/StatCard";
 import WorkoutCard from "@/components/dashboard/WorkCard";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 
