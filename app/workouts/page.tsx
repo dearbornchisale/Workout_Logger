@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import DeleteWorkoutButton from "@/components/workouts/DeleteWorkoutButton";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 
 export default async function HistoryPage() {
@@ -38,7 +40,15 @@ export default async function HistoryPage() {
             <h2>{workout.workout_date}</h2>
             <p>{workout.notes}</p>
 
-            <DeleteWorkoutButton workoutId={workout.id} />  
+            <DeleteWorkoutButton workoutId={workout.id} />
+
+            <Link href={`/workouts/${workout.id}/edit`} className={buttonVariants({ variant: "outline" })}>
+
+              Edit
+
+            </Link>
+
+
 
             {workout.sets.map((set) => (
               <p key={set.id}>
