@@ -61,7 +61,7 @@ const EditWorkoutForm = ({ workout, exercises }: EditWorkoutFormProps) => {
                 Number(set.reps) <= 0 ||
                 Number(set.weight) < 0 ||
                 !Number.isFinite(Number(set.reps)) ||
-                !Number.isFinite(Number(set.weight))||
+                !Number.isFinite(Number(set.weight)) ||
                 !Number.isInteger(Number(set.reps))
         );
 
@@ -159,10 +159,11 @@ const EditWorkoutForm = ({ workout, exercises }: EditWorkoutFormProps) => {
                 return;
             }
 
-            alert("Workout updated successfully!");
-            router.push(`/workouts/${workout.id}`);
-            router.refresh();
         }
+
+        alert("Workout updated successfully!");
+        router.push(`/workouts/${workout.id}`);
+        router.refresh();
 
     }
 
