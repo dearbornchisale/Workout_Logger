@@ -1,8 +1,6 @@
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from "next/navigation";
 
-
-
 export default async function ProgressPage() {
 
   const supabase = await createClient();
@@ -20,7 +18,7 @@ export default async function ProgressPage() {
 
 
   if (error) {
-    console.error("Error fetching sets:", error);
+    throw new Error(`Failed to fetch personal bests: ${error.message}`);
   }
 
   type ProgressSet = {
@@ -29,7 +27,7 @@ export default async function ProgressPage() {
     reps: number;
     exercises: { exercise_name: string } | null;
     workouts: { user_id: string; workout_date: string } | null;
-    
+
   };
 
   const progressSets = (sets ?? []) as unknown as ProgressSet[];
@@ -52,12 +50,21 @@ export default async function ProgressPage() {
 
     const existingBest = personalBest.get(exerciseName);
 
-    if (!existingBest || weight > existingBest.weight) {
+    const isHeavier = !existingBest || weight > existingBest.weight;
+
+    const isSameWeight =
+      existingBest &&
+      weight === existingBest.weight &&
+      date < existingBest.date;
+
+    if (isHeavier || isSameWeight) {
       personalBest.set(exerciseName, {
-        weight: weight,
-        date: date
+        weight,
+        date
       });
     }
+
+
 
   });
 
